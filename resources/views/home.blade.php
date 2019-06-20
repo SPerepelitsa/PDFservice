@@ -9,7 +9,7 @@
 
         </div>
         <div class="col-md-2">
-            <a href="#" class="btn btn-lg btn-primary btn-block">Добавить</a>
+            <a href="{{ route('download-form') }}" class="btn btn-lg btn-primary btn-block">Добавить</a>
         </div>
         <div class="col-md-12">
             <hr>
