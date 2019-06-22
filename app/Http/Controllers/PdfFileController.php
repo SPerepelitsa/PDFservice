@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\PdfFile;
+use App\Services\PdfFileService;
 use Illuminate\Http\Request;
-use Smalot\PdfParser\Parser;
+
 
 class PdfFileController extends Controller
 {
@@ -21,7 +22,7 @@ class PdfFileController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -49,6 +50,15 @@ class PdfFileController extends Controller
             'file.required' => 'You have to choose the file!',
         ]);
 
+        $pdfService = new PdfFileService($request->file);
+        $pdf = new PdfFile();
+
+        $pdf->title = $pdfService->getFileTitle();
+        $pdf->description = $pdfService->getFileDescription();
+        $pdf->key_words = $pdfService->getKeyWords();
+        $pdf->metainfo = $pdfService->getFileMetaInfo();
+
+        $pdf->save();
 
         return redirect('home')
             ->with('success','You have successfully upload file.');

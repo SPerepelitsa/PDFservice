@@ -9,15 +9,10 @@
                 {{--@include('partials._validation_messages')--}}
 
                 @if ($message = Session::get('success'))
-
                     <div class="alert alert-success alert-block">
-
                         <button type="button" class="close" data-dismiss="alert">×</button>
-
                         <strong>{{ $message }}</strong>
-
                     </div>
-
                 @endif
 
             </div>
@@ -37,32 +32,20 @@
                         <th scope="col">#</th>
                         <th scope="col">Titile</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Tags</th>
-                        <th scope="col">Size</th>
+                        <th scope="col">Key Words</th>
+                        <th scope="col">Pages</th>
                     </tr>
                     </thead>
                     <tbody>
+                    @foreach($files as $file)
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        <td>@mdo</td>
+                        <th scope="row">{{ $file->id }}</th>
+                        <td>{{ $file->title }}</td>
+                        <td>{{ $file->description }}</td>
+                        <td>{{ $file->key_words }}</td>
+                        <td>{{ $file->metainfo }}</td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td>@mdo</td>
-                    </tr>
+                    @endforeach
                     </tbody>
                 </table>
                 <div class="text-center">
