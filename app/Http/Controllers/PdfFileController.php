@@ -41,7 +41,12 @@ class PdfFileController extends Controller
      */
     public function store(Request $request)
     {
-        //TODO
+        $request->validate([
+            "file" => "required|mimes:pdf|max:16000"
+        ],
+        [
+            'file.required' => 'You have to choose the file!',
+        ]);
     }
 
     /**

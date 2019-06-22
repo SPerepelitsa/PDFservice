@@ -19,5 +19,5 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/create', 'PdfFileController@create')->name('download-form');
-Route::post('/store', 'PdfFileController@store')->name('download');
+Route::get('/create', 'PdfFileController@create')->name('upload-form');
+Route::post('/store', 'PdfFileController@store')->name('uploadfile');
