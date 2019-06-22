@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\PdfFile;
 use Illuminate\Http\Request;
+use Smalot\PdfParser\Parser;
 
 class PdfFileController extends Controller
 {
@@ -42,11 +43,15 @@ class PdfFileController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "file" => "required|mimes:pdf|max:16000"
+            "file" => "required|file|mimes:pdf|max:16000"
         ],
         [
             'file.required' => 'You have to choose the file!',
         ]);
+
+
+        return redirect('home')
+            ->with('success','You have successfully upload file.');
     }
 
     /**
