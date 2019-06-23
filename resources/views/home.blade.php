@@ -33,7 +33,8 @@
                         <th scope="col">Titile</th>
                         <th scope="col">Description</th>
                         <th scope="col">Key Words</th>
-                        <th scope="col">Pages</th>
+                        <th scope="col">Metainfo</th>
+                        <th scope="col">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -44,6 +45,16 @@
                         <td>{{ $file->description }}</td>
                         <td>{{ $file->key_words }}</td>
                         <td>{{ $file->metainfo }}</td>
+                        <td>
+                            <form action="{{ route ('delete', $file->id) }}" method="post" role="form" class="fileActionsForm">
+                                <a href="{{ route ('show', $file->id) }}" class="btn btn-primary">Show</a>
+                                {{ method_field('DELETE') }}
+                                <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
+                                <button class="btn btn-danger" type="submit" onclick='return confirm(" Are you sure you want to delete file?");'>
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     @endforeach
                     </tbody>

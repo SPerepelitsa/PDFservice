@@ -70,9 +70,14 @@ class PdfFileController extends Controller
      * @param  \App\PdfFile  $pdfFile
      * @return \Illuminate\Http\Response
      */
-    public function show(PdfFile $pdfFile)
+    public function show($id)
     {
-        //
+        $file = PdfFile::findOrFail($id);
+
+        $metainfo = json_decode($file->metainfo);
+
+
+        return view('pdf.show')->with('metainfo', $metainfo);
     }
 
     /**
@@ -104,8 +109,13 @@ class PdfFileController extends Controller
      * @param  \App\PdfFile  $pdfFile
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PdfFile $pdfFile)
+    public function destroy($id)
     {
-        //
+        $file = PdfFile::findOrFail($id);
+
+        $file->delete();
+
+        return back()
+            ->with('success','You have successfully delete file.');
     }
 }
