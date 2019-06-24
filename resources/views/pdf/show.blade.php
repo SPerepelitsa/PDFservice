@@ -22,7 +22,7 @@
                     <hr>
                 </div>
                 <div class="text-center">
-                    <a href="{{ URL::previous() }}" class="btn btn-danger btn-lg" role="button">Отмена</a>
+                    <a href="{{ URL::previous() }}" class="btn btn-danger btn-lg" role="button">Назад</a>
                 </div>
             </div>
         </div>

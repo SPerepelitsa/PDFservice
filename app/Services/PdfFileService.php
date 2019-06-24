@@ -6,7 +6,7 @@ use Smalot\PdfParser\Parser;
 
 class PdfFileService
 {
-    const NO_VALUE = "None";
+    private const NO_VALUE = "None";
 
     private $parsedPdf;
 
@@ -32,19 +32,9 @@ class PdfFileService
         return is_array($fileInfo) ? $fileInfo : [];
     }
 
-    public function getFileTitle()
+    public function getFileAttribute($attribute)
     {
-        return array_key_exists('Title', $this->fileInfo) ? $this->fileInfo['Title']: self::NO_VALUE;
-    }
-
-    public function getFileDescription()
-    {
-        return array_key_exists('Subject', $this->fileInfo) ? $this->fileInfo['Subject']: self::NO_VALUE;
-    }
-
-    public function getKeyWords()
-    {
-        return array_key_exists('Keywords', $this->fileInfo) ? $this->fileInfo['Keywords']: self::NO_VALUE;
+        return array_key_exists($attribute, $this->fileInfo) ? $this->fileInfo[$attribute]: self::NO_VALUE;
     }
 
     public function getFileMetaInfo()

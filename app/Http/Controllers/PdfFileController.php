@@ -53,9 +53,9 @@ class PdfFileController extends Controller
         $pdfService = new PdfFileService($request->file);
         $pdf = new PdfFile();
 
-        $pdf->title = $pdfService->getFileTitle();
-        $pdf->description = $pdfService->getFileDescription();
-        $pdf->key_words = $pdfService->getKeyWords();
+        $pdf->title = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['title']);
+        $pdf->description = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['description']);
+        $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
         $pdf->metainfo = $pdfService->getFileMetaInfo();
 
         $pdf->save();
@@ -75,7 +75,6 @@ class PdfFileController extends Controller
         $file = PdfFile::findOrFail($id);
 
         $metainfo = json_decode($file->metainfo);
-
 
         return view('pdf.show')->with('metainfo', $metainfo);
     }
