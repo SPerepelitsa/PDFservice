@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Storage;
 use App\PdfFile;
 use App\Services\PdfFileService;
 use Illuminate\Http\Request;
@@ -53,10 +54,14 @@ class PdfFileController extends Controller
         $pdfService = new PdfFileService($request->file);
         $pdf = new PdfFile();
 
+        // store file to local storage and get path
+        $path = Storage::putFile('public/pdf', $request->file('file'));
+
         $pdf->title = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['title']);
         $pdf->description = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['description']);
         $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
         $pdf->metainfo = $pdfService->getFileMetaInfo();
+        $pdf->name = $path ? basename($path) : null;
 
         $pdf->save();
 
@@ -111,7 +116,9 @@ class PdfFileController extends Controller
     public function destroy($id)
     {
         $file = PdfFile::findOrFail($id);
-
+        if (Storage::disk('public_pdf')->exists($file->name)) {
+            Storage::disk('public_pdf')->delete($file->name);
+        }
         $file->delete();
 
         return back()
