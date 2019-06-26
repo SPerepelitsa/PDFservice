@@ -47,7 +47,7 @@
                         <td>{{ $file->metainfo }}</td>
                         <td>
                             <form action="{{ route ('delete', $file->id) }}" method="post" role="form" class="fileActionsForm">
-                                <a href="{{ route ('show', $file->id) }}" class="btn btn-primary">Show</a>
+                                <a href="{{ route ('show', $file->url_uuid) }}" class="btn btn-primary">Show</a>
                                 {{ method_field('DELETE') }}
                                 <input name="_token" type="hidden" value="{{ csrf_token() }}"/>
                                 <button class="btn btn-danger" type="submit" onclick='return confirm(" Are you sure you want to delete file?");'>

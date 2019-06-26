@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Storage;
 use App\PdfFile;
 use App\Services\PdfFileService;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 
@@ -48,6 +49,7 @@ class PdfFileController extends Controller
         // store file to local storage and get path
         $path = Storage::putFile('public/pdf', $request->file('file'));
 
+        $pdf->url_uuid = (string) Str::uuid();
         $pdf->title = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['title']);
         $pdf->description = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['description']);
         $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
@@ -66,9 +68,9 @@ class PdfFileController extends Controller
      * @param  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($uuid)
     {
-        $file = PdfFile::findOrFail($id);
+        $file = PdfFile::where('url_uuid', $uuid)->firstOrFail();
 
         $metainfo = json_decode($file->metainfo);
         $fileName = $file->name;
