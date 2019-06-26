@@ -9,7 +9,7 @@
 
                     @include('partials._validation_messages')
 
-                    <form action="{{ route('uploadfile') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('upload-file') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <input type="file" class="form-control-file" name="file" id="InputPdfFile" aria-describedby="fileHelp">

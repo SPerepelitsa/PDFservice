@@ -19,7 +19,11 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/create', 'PdfFileController@create')->name('upload-form');
-Route::post('/store', 'PdfFileController@store')->name('uploadfile');
-Route::get('/show/{id}', 'PdfFileController@show')->name('show');
-Route::delete('/delete/{id}', 'PdfFileController@destroy')->name('delete');
+// pdffiles
+Route::prefix('pdf')->group(function () {
+    Route::get('/create', 'PdfFileController@create')->name('upload-form');
+    Route::post('/store', 'PdfFileController@store')->name('upload-file');
+    Route::get('/show/{id}', 'PdfFileController@show')->name('show');
+    Route::delete('/delete/{id}', 'PdfFileController@destroy')->name('delete');
+    Route::get('/download/{filename}', 'PdfFileController@download')->name('download');
+});

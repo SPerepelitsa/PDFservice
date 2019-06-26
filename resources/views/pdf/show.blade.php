@@ -22,7 +22,7 @@
                     <hr>
                 </div>
                 <div class="text-center">
-                    <a href="{{ URL::previous() }}" class="btn btn-danger btn-lg" role="button">Назад</a>
+                    <a href="{{ route ('download', $filename) }}" class="btn btn-primary btn-lg" role="button">Download</a>
                 </div>
             </div>
         </div>

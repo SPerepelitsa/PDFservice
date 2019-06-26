@@ -13,27 +13,18 @@ class PdfFileController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => 'show', 'download']);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-
-    }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for file upload.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        return view('download-form');
+        return view('pdf.download-form');
     }
 
     /**
@@ -70,9 +61,9 @@ class PdfFileController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display single pdf file info.
      *
-     * @param  \App\PdfFile  $pdfFile
+     * @param  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -80,35 +71,24 @@ class PdfFileController extends Controller
         $file = PdfFile::findOrFail($id);
 
         $metainfo = json_decode($file->metainfo);
+        $fileName = $file->name;
 
-        return view('pdf.show')->with('metainfo', $metainfo);
+        return view('pdf.show')->with('metainfo', $metainfo)->with('filename', $fileName);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\PdfFile  $pdfFile
+     * @param  $fileName
      * @return \Illuminate\Http\Response
      */
-    public function edit(PdfFile $pdfFile)
+    public function download($fileName)
     {
-        //
+        return Storage::disk('public_pdf')->download($fileName);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\PdfFile  $pdfFile
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, PdfFile $pdfFile)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Remove the pdf file from DB and storage.
      *
      * @param  \App\PdfFile  $pdfFile
      * @return \Illuminate\Http\Response
