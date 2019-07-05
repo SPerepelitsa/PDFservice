@@ -7,6 +7,7 @@ use App\PdfFile;
 use App\Services\PdfFileService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 class PdfFileController extends Controller
@@ -55,6 +56,7 @@ class PdfFileController extends Controller
         $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
         $pdf->metainfo = $pdfService->getFileMetaInfo();
         $pdf->name = $path ? basename($path) : null;
+        $pdf->user_id = Auth::id();
 
         $pdf->save();
 

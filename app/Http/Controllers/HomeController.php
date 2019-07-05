@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\PdfFile;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -24,7 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $pdfFiles = PdfFile::all();
+        $pdfFiles = PdfFile::where('user_id', Auth::id())->get();
 
         return view('home')->with('files', $pdfFiles);
     }
