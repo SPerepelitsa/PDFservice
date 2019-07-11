@@ -67,7 +67,7 @@ class PdfFileController extends Controller
     /**
      * Display single pdf file info.
      *
-     * @param  $id
+     * @param  $uuid
      * @return \Illuminate\Http\Response
      */
     public function show($uuid)
@@ -81,7 +81,7 @@ class PdfFileController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Pdf file download by name.
      *
      * @param  $fileName
      * @return \Illuminate\Http\Response

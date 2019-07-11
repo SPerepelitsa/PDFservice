@@ -25,7 +25,7 @@ class AuthController extends Controller
             'c_password' => 'required|same:password',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
 

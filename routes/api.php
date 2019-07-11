@@ -20,3 +20,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Auth
 Route::post('login', 'API\AuthController@login');
 Route::post('register', 'API\AuthController@register');
+
+// pdffiles
+Route::prefix('pdf')->group(function () {
+    Route::get('/files', 'API\ApiPdfFileController@getAll')->middleware('auth:api');
+    Route::get('/show/{uuid}', 'API\ApiPdfFileController@show');
+    Route::get('/download/{filename}', 'API\ApiPdfFileController@download');
+});
