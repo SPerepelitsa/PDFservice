@@ -20,6 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Auth
 Route::post('login', 'API\AuthController@login');
 Route::post('register', 'API\AuthController@register');
+Route::post('logout', 'API\AuthController@logout');
+Route::post('refresh', 'API\AuthController@refresh');
 
 // pdffiles
 Route::prefix('pdf')->group(function () {
