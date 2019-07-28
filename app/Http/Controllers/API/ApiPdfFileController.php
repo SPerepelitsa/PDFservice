@@ -22,7 +22,7 @@ class ApiPdfFileController extends Controller
      */
     public function getAll()
     {
-        $pdfFiles = PdfFile::where('user_id', Auth::id())->get();
+        $pdfFiles = PdfFile::where('user_id', auth('api')->id())->get();
 
         return response()->json(['pdf_files' => $pdfFiles], 200);
     }
