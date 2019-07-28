@@ -15,7 +15,7 @@ class PdfFileController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth', ['except' => 'show', 'download']);
+        $this->middleware('auth', ['except' => ['show', 'download']]);
     }
 
 

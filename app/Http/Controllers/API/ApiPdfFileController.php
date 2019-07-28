@@ -10,6 +10,11 @@ use App\PdfFile;
 
 class ApiPdfFileController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('jwt.auth', ['except' => ['show', 'download']]);
+    }
+
     /**
      * Show the application dashboard.
      *
@@ -20,6 +25,16 @@ class ApiPdfFileController extends Controller
         $pdfFiles = PdfFile::where('user_id', Auth::id())->get();
 
         return response()->json(['pdf_files' => $pdfFiles], 200);
+    }
+
+    /**
+     * Show the form for file upload.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function upload()
+    {
+        return response()->json(['is_success' => true, 'message' => 'All Good'], 200);
     }
 
     /**

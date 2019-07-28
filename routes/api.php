@@ -25,7 +25,8 @@ Route::post('refresh', 'API\AuthController@refresh');
 
 // pdffiles
 Route::prefix('pdf')->group(function () {
-    Route::get('/files', 'API\ApiPdfFileController@getAll')->middleware('jwt.auth');
+    Route::get('/files', 'API\ApiPdfFileController@getAll');
+    Route::get('/upload', 'API\ApiPdfFileController@upload');
     Route::get('/show/{uuid}', 'API\ApiPdfFileController@show');
     Route::get('/download/{filename}', 'API\ApiPdfFileController@download');
 });
