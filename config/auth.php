@@ -42,6 +42,11 @@ return [
         ],
 
         'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
+
+        'api-react' => [
             'driver' => 'jwt',
             'provider' => 'users',
         ],

@@ -13,20 +13,36 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// < ========== React API routes ========== >
 
-// Auth
+// Auth React using JWT Token
 Route::post('login', 'API\AuthController@login');
 Route::post('register', 'API\AuthController@register');
 Route::post('logout', 'API\AuthController@logout');
 Route::post('refresh', 'API\AuthController@refresh');
 
-// pdffiles
+// Pdffiles React
 Route::prefix('pdf')->group(function () {
     Route::get('/files', 'API\ApiPdfFileController@getAll');
     Route::get('/upload', 'API\ApiPdfFileController@upload');
     Route::get('/show/{uuid}', 'API\ApiPdfFileController@show');
     Route::get('/download/{filename}', 'API\ApiPdfFileController@download');
 });
+
+// < ========== Mobile API routes ========== >
+
+// Auth API Mobile using access Token
+Route::prefix('mobile')->group(function () {
+    Route::post('login', 'Mobile\AuthController@login');
+    Route::post('register', 'Mobile\AuthController@register');
+    Route::post('logout', 'Mobile\AuthController@logout');
+});
+
+// Pdffiles Mobile
+Route::prefix('mobile/pdf')->group(function () {
+    Route::get('/files', 'Mobile\MobilePdfFileController@getAll');
+    Route::get('/show/{uuid}', 'Mobile\MobilePdfFileController@show');
+    Route::get('/download/{filename}', 'Mobile\MobilePdfFileController@download');
+});
+
+

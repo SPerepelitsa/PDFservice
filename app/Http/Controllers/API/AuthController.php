@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +44,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        $token = auth('api')->login($user);
+        $token = auth('api-react')->login($user);
 
         return $this->respondWithToken($token);
     }
@@ -69,7 +68,7 @@ class AuthController extends Controller
 
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth('api')->attempt($credentials)) {
+        if (! $token = auth('api-react')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -83,7 +82,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth('api')->logout();
+        auth('api-react')->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -95,7 +94,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth('api')->refresh());
+        return $this->respondWithToken(auth('api-react')->refresh());
     }
 
     /**
@@ -110,7 +109,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'expires_in' => auth('api-react')->factory()->getTTL() * 60
         ], 200);
     }
 }

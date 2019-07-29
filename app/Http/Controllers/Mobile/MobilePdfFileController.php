@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Mobile;
 
-use Storage;
+
 use App\Http\Controllers\Controller;
 use App\PdfFile;
 
-class ApiPdfFileController extends Controller
+class MobilePdfFileController extends Controller
 {
+
     public function __construct()
     {
-        $this->middleware('jwt.auth', ['except' => ['show', 'download']]);
+        $this->middleware('auth:api', ['except' => ['show', 'download']]);
     }
 
     /**
@@ -20,19 +21,9 @@ class ApiPdfFileController extends Controller
      */
     public function getAll()
     {
-        $pdfFiles = PdfFile::where('user_id', auth('api-react')->id())->get();
+        $pdfFiles = PdfFile::where('user_id', auth('api')->id())->get();
 
         return response()->json(['pdf_files' => $pdfFiles], 200);
-    }
-
-    /**
-     * Show the form for file upload.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function upload()
-    {
-        return response()->json(['is_success' => true, 'message' => 'All Good'], 200);
     }
 
     /**
@@ -44,10 +35,8 @@ class ApiPdfFileController extends Controller
     public function show($uuid)
     {
         $file = PdfFile::where('url_uuid', $uuid)->firstOrFail();
-
         if ($file) {
-            $fileDownloadLink = url("api/pdf/download/{$file->name}");
-
+            $fileDownloadLink = url("api/mobile/pdf/download/{$file->name}");
             return response()->json(['file_info' => $file->metainfo, 'download_link' => $fileDownloadLink], 200);
         } else {
             return response()->json(['error' => 'File does not exist or has been deleted'], 404);
@@ -64,10 +53,8 @@ class ApiPdfFileController extends Controller
     {
         if (Storage::disk('public_pdf')->exists($fileName)) {
             $filePath = Storage::disk('public_pdf')->path($fileName);
-
             return response()->download($filePath);
         }
-
         return response()->json(['error' => 'File does not exist or has been deleted'], 404);
     }
 }
