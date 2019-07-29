@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Mobile;
 
-
+use Storage;
 use App\Http\Controllers\Controller;
 use App\PdfFile;
 
