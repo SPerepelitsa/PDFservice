@@ -24,7 +24,8 @@ Route::post('refresh', 'API\AuthController@refresh');
 // Pdffiles React
 Route::prefix('pdf')->group(function () {
     Route::get('/files', 'API\ApiPdfFileController@getAll');
-    Route::get('/upload', 'API\ApiPdfFileController@upload');
+    Route::get('/upload', 'API\ApiPdfFileController@uploadForm');
+    Route::post('/store', 'API\ApiPdfFileController@store');
     Route::get('/show/{uuid}', 'API\ApiPdfFileController@show');
     Route::get('/download/{filename}', 'API\ApiPdfFileController@download');
 });

@@ -4,7 +4,11 @@ namespace App\Http\Controllers\API;
 
 use Storage;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\PdfFile;
+use App\Services\PdfFileService;
+use Illuminate\Support\Facades\Validator;
 
 class ApiPdfFileController extends Controller
 {
@@ -33,6 +37,47 @@ class ApiPdfFileController extends Controller
     public function upload()
     {
         return response()->json(['is_success' => true, 'message' => 'All Good'], 200);
+    }
+
+    /**
+     *  Store pdf file to storage and write file info to DB
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->file(), [
+            "file" => "required|file|mimes:pdf|max:16000"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $pdfService = new PdfFileService($request->file);
+        $pdf = new PdfFile();
+
+        // store file to local storage and get path
+        $path = Storage::putFile('public/pdf', $request->file('file'));
+
+        // $path can be string|false
+        if ($path === false) {
+            return response()->json(['is_success' => false, 'message' => 'Upload: Failed to save file to storage'], 400);
+        }
+
+        $pdf->url_uuid = (string)Str::uuid();
+        $pdf->title = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['title']);
+        $pdf->description = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['description']);
+        $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
+        $pdf->metainfo = $pdfService->getFileMetaInfo();
+        $pdf->name = basename($path);
+        $pdf->user_id = auth('api-react')->id();
+
+        $pdf->save();
+
+        return response()->json(['is_success' => true, 'message' =>'You have successfully upload file.'], 200);
+
     }
 
     /**
