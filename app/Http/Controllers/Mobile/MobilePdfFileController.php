@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Mobile;
 
 use Storage;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\PdfFile;
+use App\Services\PdfFileService;
+use Illuminate\Support\Facades\Validator;
 
 class MobilePdfFileController extends Controller
 {
@@ -41,6 +45,47 @@ class MobilePdfFileController extends Controller
         } else {
             return response()->json(['error' => 'File does not exist or has been deleted'], 404);
         }
+    }
+
+    /**
+     *  Store pdf file to storage and write file info to DB
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->file(), [
+            "file" => "required|file|mimes:pdf|max:16000"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $pdfService = new PdfFileService($request->file);
+        $pdf = new PdfFile();
+
+        // store file to local storage and get path
+        $path = Storage::putFile('public/pdf', $request->file('file'));
+
+        // $path can be string|false
+        if ($path === false) {
+            return response()->json(['is_success' => false, 'message' => 'Upload: Failed to save file to storage'], 400);
+        }
+
+        $pdf->url_uuid = (string)Str::uuid();
+        $pdf->title = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['title']);
+        $pdf->description = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['description']);
+        $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
+        $pdf->metainfo = $pdfService->getFileMetaInfo();
+        $pdf->name = basename($path);
+        $pdf->user_id = auth('api')->id();
+
+        $pdf->save();
+
+        return response()->json(['is_success' => true, 'message' =>'File has been successfully uploaded.'], 200);
+
     }
 
     /**

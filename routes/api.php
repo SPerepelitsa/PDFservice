@@ -43,6 +43,7 @@ Route::prefix('mobile')->group(function () {
 Route::prefix('mobile/pdf')->group(function () {
     Route::get('/files', 'Mobile\MobilePdfFileController@getAll');
     Route::get('/show/{uuid}', 'Mobile\MobilePdfFileController@show');
+    Route::post('/store', 'Mobile\MobilePdfFileController@store');
     Route::get('/download/{filename}', 'Mobile\MobilePdfFileController@download');
 });
 

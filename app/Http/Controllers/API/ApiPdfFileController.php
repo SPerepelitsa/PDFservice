@@ -76,7 +76,7 @@ class ApiPdfFileController extends Controller
 
         $pdf->save();
 
-        return response()->json(['is_success' => true, 'message' =>'You have successfully upload file.'], 200);
+        return response()->json(['is_success' => true, 'message' =>'File has been successfully uploaded.'], 200);
 
     }
 
