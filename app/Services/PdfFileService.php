@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Smalot\PdfParser\Parser;
+use App\PdfFile;
 
 class PdfFileService
 {
@@ -30,6 +31,25 @@ class PdfFileService
         $fileInfo = $this->parsedPdf->getDetails();
 
         return is_array($fileInfo) ? $fileInfo : [];
+    }
+
+    public function getDescription()
+    {
+       $description = $this->getFileAttribute(PdfFile::ATTRIBUTES['description']);
+       // if there is no description, take first 250 symbols of file text(body)
+       if ($description == self::NO_VALUE) {
+           $pages = $this->parsedPdf->getPages();
+           foreach ($pages as $page) {
+               // check every page until we got one(not empty) with a text and break the loop
+                if($page->getText() !== ' ') {
+                    $fileText =$page->getText();
+                    break;
+                }
+           }
+           $description = mb_strimwidth($fileText, 0, 250, "...");
+       }
+
+       return strip_tags(preg_replace("#[^а-яА-ЯA-Za-z;:_.,? -]+#u", '',  $description));
     }
 
     public function getFileAttribute($attribute)

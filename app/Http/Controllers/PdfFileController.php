@@ -52,7 +52,7 @@ class PdfFileController extends Controller
 
         $pdf->url_uuid = (string) Str::uuid();
         $pdf->title = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['title']);
-        $pdf->description = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['description']);
+        $pdf->description = $pdfService->getDescription();
         $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
         $pdf->metainfo = $pdfService->getFileMetaInfo();
         $pdf->name = $path ? basename($path) : null;
