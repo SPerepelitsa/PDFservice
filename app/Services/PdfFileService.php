@@ -49,7 +49,7 @@ class PdfFileService
            $description = mb_strimwidth($fileText, 0, 250, "...");
        }
 
-       return strip_tags(preg_replace("#[^а-яА-ЯA-Za-z;:_.,? -]+#u", '',  $description));
+       return strip_tags(preg_replace("#[^а-яА-ЯA-Za-z0-9;:_.,? -]+#u", '',  $description));
     }
 
     public function getFileAttribute($attribute)
