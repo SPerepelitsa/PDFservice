@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Storage;
 use App\PdfFile;
-use App\Services\PdfFileService;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
 class PdfFileController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('auth', ['except' => ['show', 'download']]);
@@ -44,24 +41,18 @@ class PdfFileController extends Controller
             'file.required' => 'You have to choose the file!',
         ]);
 
-        $pdfService = new PdfFileService($request->file);
+        $ownerId = Auth::id();
+
         $pdf = new PdfFile();
+        $save = $pdf->saveFileAndData($request->file, $ownerId);
 
-        // store file to local storage and get path
-        $path = Storage::putFile('public/pdf', $request->file('file'));
+        if ($save) {
+            return redirect('home')
+                ->with('success','You have successfully upload file.');
+        } else {
+            return back()->withErrors('Upload: Failed to save file to storage');
+        }
 
-        $pdf->url_uuid = (string) Str::uuid();
-        $pdf->title = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['title']);
-        $pdf->description = $pdfService->getDescription();
-        $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
-        $pdf->metainfo = $pdfService->getFileMetaInfo();
-        $pdf->name = $path ? basename($path) : null;
-        $pdf->user_id = Auth::id();
-
-        $pdf->save();
-
-        return redirect('home')
-            ->with('success','You have successfully upload file.');
     }
 
     /**
@@ -94,7 +85,7 @@ class PdfFileController extends Controller
     /**
      * Remove the pdf file from DB and storage.
      *
-     * @param  \App\PdfFile  $pdfFile
+     * @param  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
