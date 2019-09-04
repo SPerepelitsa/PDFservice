@@ -55,29 +55,15 @@ class ApiPdfFileController extends Controller
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        $pdfService = new PdfFileService($request->file);
         $pdf = new PdfFile();
+        $ownerId = auth('api-react')->id();
+        $save = $pdf->saveFileAndData($request->file, $ownerId);
 
-        // store file to local storage and get path
-        $path = Storage::putFile('public/pdf', $request->file('file'));
-
-        // $path can be string|false
-        if ($path === false) {
+        if ($save) {
+            return response()->json(['is_success' => true, 'message' =>'File has been successfully uploaded.'], 200);
+        } else {
             return response()->json(['is_success' => false, 'message' => 'Upload: Failed to save file to storage'], 400);
         }
-
-        $pdf->url_uuid = (string)Str::uuid();
-        $pdf->title = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['title']);
-        $pdf->description = $pdfService->getDescription();
-        $pdf->key_words = $pdfService->getFileAttribute(PdfFile::ATTRIBUTES['key_words']);
-        $pdf->metainfo = $pdfService->getFileMetaInfo();
-        $pdf->name = basename($path);
-        $pdf->user_id = auth('api-react')->id();
-
-        $pdf->save();
-
-        return response()->json(['is_success' => true, 'message' =>'File has been successfully uploaded.'], 200);
-
     }
 
     /**
