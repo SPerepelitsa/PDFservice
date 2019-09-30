@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTO\PdfFileDTO;
 use Smalot\PdfParser\Parser;
 use Storage;
 
@@ -15,17 +16,9 @@ class PdfFileService
 
     private const NO_VALUE = "None";
 
-    private $pdfFile;
-
-    private $parsedPdf;
-
-    private $fileInfo;
-
-    public function __construct($pdfFile)
+    public function __construct()
     {
-        $this->pdfFile = $pdfFile;
-        $this->parsedPdf = $this->parsePdf($pdfFile);
-        $this->fileInfo = $this->setFileInfo();
+        //
     }
 
     /**
@@ -41,50 +34,50 @@ class PdfFileService
     }
 
     /**
-     * @return array
-     */
-    private function setFileInfo()
-    {
-        $fileInfo = $this->parsedPdf->getDetails();
-
-        return is_array($fileInfo) ? $fileInfo : [];
-    }
-
-    /**
-     * @param $attribute
-     * @return mixed|string
-     */
-    private function getFileAttribute($attribute)
-    {
-        return array_key_exists($attribute, $this->fileInfo) ? $this->fileInfo[$attribute] : self::NO_VALUE;
-    }
-
-    /**
-     * @return mixed|string
-     */
-    public function getTitle()
-    {
-        return $this->getFileAttribute(self::FILE_ATTRIBUTES['title']);
-    }
-
-    /**
-     * @return mixed|string
-     */
-    public function getKeyWords()
-    {
-        return $this->getFileAttribute(self::FILE_ATTRIBUTES['key_words']);
-    }
-
-    /**
-     * @return string
+     * @param $parsedPdf
+     * @return mixed
      * @throws \Exception
      */
-    public function getDescription()
+    private function getFileInfo($parsedPdf)
     {
-        $description = $this->getFileAttribute(self::FILE_ATTRIBUTES['description']);
+        $fileInfo = $parsedPdf->getDetails();
+
+        if (is_array($fileInfo) && !empty($fileInfo)) {
+            return $fileInfo;
+        } else {
+            throw new \Exception('Can not get file info');
+        }
+    }
+
+    /**
+     * @param $fileInfo
+     * @return string
+     */
+    private function getTitle($fileInfo)
+    {
+        return $fileInfo[self::FILE_ATTRIBUTES['title']] ?? self::NO_VALUE;
+    }
+
+    /**
+     * @param $fileInfo
+     * @return string
+     */
+    private function getKeyWords($fileInfo)
+    {
+        return $fileInfo[self::FILE_ATTRIBUTES['key_words']] ?? self::NO_VALUE;
+    }
+
+    /**
+     * @param $fileInfo
+     * @param $parsedPdf
+     * @return string
+     */
+    private function getDescription($fileInfo, $parsedPdf)
+    {
+        $description = $fileInfo[self::FILE_ATTRIBUTES['description']] ?? self::NO_VALUE;
         // if there is no description, take first 250 symbols of file text(body)
         if ($description == self::NO_VALUE) {
-            $pages = $this->parsedPdf->getPages();
+            $pages = $parsedPdf->getPages();
             foreach ($pages as $page) {
                 // check every page until we got one(not empty) with a text and break the loop
                 if ($page->getText() !== ' ') {
@@ -99,22 +92,41 @@ class PdfFileService
     }
 
     /**
+     * @param $fileInfo
      * @return string
      */
-    public function getFileMetaInfo()
+    private function getMetaInfo($fileInfo)
     {
-        $metaInfo = $this->fileInfo;
+        $metaInfo = $fileInfo;
 
         return !empty($metaInfo) ? json_encode($metaInfo) : json_encode(self::NO_VALUE);
     }
 
     /**
-     * @return bool|string
+     * @param $pdfFile
+     * @return bool
      */
-    public function saveToStorageAndGetPath()
+    public function saveToStorageAndGetPath($pdfFile)
     {
-        $path = Storage::putFile('public/pdf', $this->pdfFile);
+        $path = Storage::putFile('public/pdf', $pdfFile);
 
         return $path ?: false;
+    }
+
+    /**
+     * @param $pdfFile
+     * @return PdfFileDTO
+     * @throws \Exception
+     */
+    public function getFileAttributes($pdfFile)
+    {
+        $parsedPdf = $this->parsePdf($pdfFile);
+        $allFileInfo = $this->getFileInfo($parsedPdf);
+        $title = $this->getTitle($allFileInfo);
+        $description = $this->getDescription($allFileInfo, $parsedPdf);
+        $keyWords = $this->getKeyWords($allFileInfo);
+        $metaInfo = $this->getMetaInfo($allFileInfo);
+
+        return new PdfFileDTO($title, $description, $keyWords, $metaInfo);
     }
 }

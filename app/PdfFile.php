@@ -10,27 +10,29 @@ use Illuminate\Support\Str;
 class PdfFile extends Model
 {
     /**
-     * Save PDF file to storage and PDF file data to database.
+     *   Save PDF file to storage and PDF file data to database.
      *
      * @param $file
      * @param $ownerId
      * @return bool
+     * @throws \Exception
      */
     public function saveFileAndData($file, $ownerId)
     {
-        $pdfService = new PdfFileService($file);
+        $pdfService = new PdfFileService();
+        $pdfFileDTO = $pdfService->getFileAttributes($file);
         //save pdf to storage
-        $path = $pdfService->saveToStorageAndGetPath();
+        $path = $pdfService->saveToStorageAndGetPath($file);
         // if file upload to storage fails
         if ($path === false) {
             return false;
         }
 
         $this->url_uuid = (string)Str::uuid();
-        $this->title = $pdfService->getTitle();
-        $this->description = $pdfService->getDescription();
-        $this->key_words = $pdfService->getKeyWords();
-        $this->metainfo = $pdfService->getFileMetaInfo();
+        $this->title = $pdfFileDTO->getTitle();
+        $this->description = $pdfFileDTO->getDescription();
+        $this->key_words = $pdfFileDTO->getKeyWords();
+        $this->metainfo = $pdfFileDTO->getMetaInfo();
         $this->name = basename($path);
         $this->user_id = $ownerId;
 

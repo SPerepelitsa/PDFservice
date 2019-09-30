@@ -45,7 +45,7 @@ class ApiPdfFileController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request, PdfFile $pdf)
     {
         $validator = Validator::make($request->file(), [
             "file" => "required|file|mimes:pdf|max:16000"
@@ -55,9 +55,12 @@ class ApiPdfFileController extends Controller
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        $pdf = new PdfFile();
         $ownerId = auth('api-react')->id();
-        $save = $pdf->saveFileAndData($request->file, $ownerId);
+        try {
+            $save = $pdf->saveFileAndData($request->file, $ownerId);
+        } catch (\Exception $e) {
+            return response()->json(['is_success' => false, 'message' => $e->getMessage()], 400);
+        }
 
         if ($save) {
             return response()->json(['is_success' => true, 'message' =>'File has been successfully uploaded.'], 200);

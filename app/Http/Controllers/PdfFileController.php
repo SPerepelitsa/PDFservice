@@ -27,12 +27,11 @@ class PdfFileController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param PdfFile $pdf
+     * @return $this
      */
-    public function store(Request $request)
+    public function store(Request $request, PdfFile $pdf)
     {
         $request->validate([
             "file" => "required|file|mimes:pdf|max:16000"
@@ -42,9 +41,11 @@ class PdfFileController extends Controller
         ]);
 
         $ownerId = Auth::id();
-
-        $pdf = new PdfFile();
-        $save = $pdf->saveFileAndData($request->file, $ownerId);
+        try {
+            $save = $pdf->saveFileAndData($request->file, $ownerId);
+        } catch (\Exception $e) {
+            return back()->withErrors($e->getMessage());
+        }
 
         if ($save) {
             return redirect('home')
@@ -52,7 +53,6 @@ class PdfFileController extends Controller
         } else {
             return back()->withErrors('Upload: Failed to save file to storage');
         }
-
     }
 
     /**
