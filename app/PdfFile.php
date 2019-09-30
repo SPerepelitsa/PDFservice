@@ -3,14 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Services\PdfFileService;
 use Illuminate\Support\Str;
-
+use PdfFileService;
 
 class PdfFile extends Model
 {
     /**
-     *   Save PDF file to storage and PDF file data to database.
+     * Save PDF file to storage and PDF file data to database.
      *
      * @param $file
      * @param $ownerId
@@ -19,10 +18,9 @@ class PdfFile extends Model
      */
     public function saveFileAndData($file, $ownerId)
     {
-        $pdfService = new PdfFileService();
-        $pdfFileDTO = $pdfService->getFileAttributes($file);
+        $pdfFileDTO = PdfFileService::getFileAttributes($file);
         //save pdf to storage
-        $path = $pdfService->saveToStorageAndGetPath($file);
+        $path = PdfFileService::saveToStorageAndGetPath($file);
         // if file upload to storage fails
         if ($path === false) {
             return false;
