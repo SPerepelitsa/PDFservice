@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PdfFileService;
 use Illuminate\Http\Request;
 use Storage;
 use App\PdfFile;
@@ -27,11 +28,12 @@ class PdfFileController extends Controller
     }
 
     /**
+     * @param PdfFileService $pdfService
      * @param Request $request
      * @param PdfFile $pdf
      * @return $this
      */
-    public function store(Request $request, PdfFile $pdf)
+    public function store(PdfFileService $pdfService, Request $request, PdfFile $pdf)
     {
         $request->validate([
             "file" => "required|file|mimes:pdf|max:16000"
@@ -42,7 +44,7 @@ class PdfFileController extends Controller
 
         $ownerId = Auth::id();
         try {
-            $save = $pdf->saveFileAndData($request->file, $ownerId);
+            $save = $pdf->saveFileAndData($pdfService, $request->file, $ownerId);
         } catch (\Exception $e) {
             return back()->withErrors($e->getMessage());
         }

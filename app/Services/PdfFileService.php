@@ -104,13 +104,13 @@ class PdfFileService
 
     /**
      * @param $pdfFile
-     * @return bool
+     * @return string|false
      */
     public function saveToStorageAndGetPath($pdfFile)
     {
         $path = Storage::putFile('public/pdf', $pdfFile);
 
-        return $path ?: false;
+        return $path;
     }
 
     /**
