@@ -16,9 +16,11 @@ class PdfFileService
 
     private const NO_VALUE = "None";
 
-    public function __construct()
+    private $parser;
+
+    public function __construct(Parser $parser)
     {
-        //
+        $this->parser = $parser;
     }
 
     /**
@@ -28,7 +30,7 @@ class PdfFileService
      */
     private function parsePdf($pdfFile)
     {
-        $parser = new Parser();
+        $parser = $this->parser;
 
         return $parser->parseFile($pdfFile);
     }

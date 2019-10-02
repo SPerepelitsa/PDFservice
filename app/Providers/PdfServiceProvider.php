@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\PdfFileService;
 use Illuminate\Support\ServiceProvider;
+use Smalot\PdfParser\Parser;
 
 class PdfServiceProvider extends ServiceProvider
 {
@@ -15,8 +16,8 @@ class PdfServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('serviceForPdfFiles', 'App\Services\PdfFileService');
-        $this->app->singleton('App\Services\ChallengeService', function() {
-            return new PdfFileService;
+        $this->app->singleton('App\Services\PdfFleService', function() {
+            return new PdfFileService(new Parser);
         });
     }
 
