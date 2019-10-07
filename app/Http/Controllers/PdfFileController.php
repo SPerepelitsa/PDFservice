@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Services\PdfFileService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Storage;
 use App\PdfFile;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 
 class PdfFileController extends Controller
@@ -18,11 +21,11 @@ class PdfFileController extends Controller
 
 
     /**
-     * Show the form for file upload.
+     *  Show the form for file upload.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         return view('pdf.download-form');
     }
@@ -31,9 +34,9 @@ class PdfFileController extends Controller
      * @param PdfFileService $pdfService
      * @param Request $request
      * @param PdfFile $pdf
-     * @return $this
+     * @return RedirectResponse
      */
-    public function store(PdfFileService $pdfService, Request $request, PdfFile $pdf)
+    public function store(PdfFileService $pdfService, Request $request, PdfFile $pdf): RedirectResponse
     {
         $request->validate([
             "file" => "required|file|mimes:pdf|max:16000"
@@ -51,7 +54,7 @@ class PdfFileController extends Controller
 
         if ($save) {
             return redirect('home')
-                ->with('success','You have successfully upload file.');
+                ->with('success', 'You have successfully upload file.');
         } else {
             return back()->withErrors('Upload: Failed to save file to storage');
         }
@@ -60,10 +63,10 @@ class PdfFileController extends Controller
     /**
      * Display single pdf file info.
      *
-     * @param  $uuid
-     * @return \Illuminate\Http\Response
+     * @param string $uuid
+     * @return View
      */
-    public function show($uuid)
+    public function show(string $uuid): View
     {
         $file = PdfFile::where('url_uuid', $uuid)->firstOrFail();
 
@@ -76,10 +79,10 @@ class PdfFileController extends Controller
     /**
      * Pdf file download by name.
      *
-     * @param  $fileName
-     * @return \Illuminate\Http\Response
+     * @param string $fileName
+     * @return StreamedResponse
      */
-    public function download($fileName)
+    public function download(string $fileName): StreamedResponse
     {
         return Storage::disk('public_pdf')->download($fileName);
     }
@@ -87,10 +90,10 @@ class PdfFileController extends Controller
     /**
      * Remove the pdf file from DB and storage.
      *
-     * @param  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         $file = PdfFile::findOrFail($id);
         if (Storage::disk('public_pdf')->exists($file->name)) {
@@ -99,6 +102,6 @@ class PdfFileController extends Controller
         $file->delete();
 
         return back()
-            ->with('success','You have successfully delete file.');
+            ->with('success', 'You have successfully delete file.');
     }
 }

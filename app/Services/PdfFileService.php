@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\DTO\PdfFileDTO;
+use Illuminate\Http\UploadedFile;
 use Smalot\PdfParser\Parser;
+use Smalot\PdfParser\Document;
 use Storage;
 
 class PdfFileService
@@ -24,11 +26,11 @@ class PdfFileService
     }
 
     /**
-     * @param $pdfFile
-     * @return \Smalot\PdfParser\Document
+     * @param UploadedFile $pdfFile
+     * @return Document
      * @throws \Exception
      */
-    private function parsePdf($pdfFile)
+    private function parsePdf(UploadedFile $pdfFile): Document
     {
         $parser = $this->parser;
 
@@ -36,11 +38,11 @@ class PdfFileService
     }
 
     /**
-     * @param $parsedPdf
-     * @return mixed
+     * @param Document $parsedPdf
+     * @return array
      * @throws \Exception
      */
-    private function getFileInfo($parsedPdf)
+    private function getFileInfo(Document $parsedPdf): array
     {
         $fileInfo = $parsedPdf->getDetails();
 
@@ -52,29 +54,30 @@ class PdfFileService
     }
 
     /**
-     * @param $fileInfo
+     * @param array $fileInfo
      * @return string
      */
-    private function getTitle($fileInfo)
+    private function getTitle(array $fileInfo): string
     {
         return $fileInfo[self::FILE_ATTRIBUTES['title']] ?? self::NO_VALUE;
     }
 
     /**
-     * @param $fileInfo
+     * @param array $fileInfo
      * @return string
      */
-    private function getKeyWords($fileInfo)
+    private function getKeyWords(array $fileInfo): string
     {
         return $fileInfo[self::FILE_ATTRIBUTES['key_words']] ?? self::NO_VALUE;
     }
 
     /**
-     * @param $fileInfo
-     * @param $parsedPdf
+     * @param array $fileInfo
+     * @param Document $parsedPdf
      * @return string
+     * @throws \Exception
      */
-    private function getDescription($fileInfo, $parsedPdf)
+    private function getDescription(array $fileInfo, Document $parsedPdf): string
     {
         $description = $fileInfo[self::FILE_ATTRIBUTES['description']] ?? self::NO_VALUE;
         // if there is no description, take first 250 symbols of file text(body)
@@ -94,10 +97,10 @@ class PdfFileService
     }
 
     /**
-     * @param $fileInfo
+     * @param array $fileInfo
      * @return string
      */
-    private function getMetaInfo($fileInfo)
+    private function getMetaInfo(array $fileInfo): string
     {
         $metaInfo = $fileInfo;
 
@@ -105,22 +108,22 @@ class PdfFileService
     }
 
     /**
-     * @param $pdfFile
-     * @return string|false
+     * @param UploadedFile $pdfFile
+     * @return null|string
      */
-    public function saveToStorageAndGetPath($pdfFile)
+    public function saveToStorageAndGetPath(UploadedFile $pdfFile): ?string
     {
         $path = Storage::putFile('public/pdf', $pdfFile);
 
-        return $path;
+        return $path ?: null;
     }
 
     /**
-     * @param $pdfFile
+     * @param UploadedFile $pdfFile
      * @return PdfFileDTO
      * @throws \Exception
      */
-    public function getFileAttributes($pdfFile)
+    public function getFileAttributes(UploadedFile $pdfFile): PdfFileDTO
     {
         $parsedPdf = $this->parsePdf($pdfFile);
         $allFileInfo = $this->getFileInfo($parsedPdf);

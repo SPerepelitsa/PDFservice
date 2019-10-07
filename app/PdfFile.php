@@ -2,26 +2,27 @@
 
 namespace App;
 
+use App\Services\PdfFileService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 class PdfFile extends Model
 {
     /**
-     * Save PDF file to storage and PDF file data to database.
-     *
-     * @param $pdfService
-     * @param $file
-     * @param $ownerId
+     * @param PdfFileService $pdfService
+     * @param UploadedFile $file
+     * @param int $ownerId
      * @return bool
+     * @throws \Exception
      */
-    public function saveFileAndData($pdfService, $file, $ownerId)
+    public function saveFileAndData(PdfFileService $pdfService, UploadedFile $file, int $ownerId): bool
     {
         $pdfFileDTO = $pdfService->getFileAttributes($file);
         //save pdf to storage
         $path = $pdfService->saveToStorageAndGetPath($file);
         // if file upload to storage fails
-        if ($path === false) {
+        if ($path === null) {
             return false;
         }
 
